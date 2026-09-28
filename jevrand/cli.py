@@ -75,7 +75,7 @@ def _parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--provider",
-        choices=("typesafe", "openrouter"),
+        choices=("typesafe", "openrouter", "openjev"),
         help="override automatic provider selection",
     )
     parser.add_argument("--version", action="version", version=f"jevrand {__version__}")

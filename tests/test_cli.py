@@ -15,6 +15,7 @@ from jevrand.providers import Provider
 def credentials(monkeypatch):
     monkeypatch.setenv("TYPESAFE_API_KEY", "fake-key")
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    monkeypatch.delenv("OPENJEV_API_KEY", raising=False)
 
     def unexpected_call(*args):
         pytest.fail("This command must not call the provider.")
@@ -422,6 +423,7 @@ def test_offline_commands_in_fresh_process(args):
         not in (
             "TYPESAFE_API_KEY",
             "OPENROUTER_API_KEY",
+            "OPENJEV_API_KEY",
         )
     }
     completed = subprocess.run(

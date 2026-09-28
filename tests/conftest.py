@@ -1,7 +1,7 @@
 def pytest_addoption(parser):
     parser.addoption(
         "--live-provider",
-        choices=("typesafe", "openrouter"),
+        choices=("typesafe", "openrouter", "openjev"),
         default=None,
         help="Run billable Jev regression tests against this provider (requires its API key).",
     )

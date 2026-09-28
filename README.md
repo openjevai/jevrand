@@ -4,6 +4,8 @@ jevrand generates a number, asks TypeSafe's Jev whether it looks acceptably rand
 
 This is a toy. You cannot establish randomness from a single number, and rejecting particular values biases the output. Candidates come from Python's `secrets` module. Use `secrets` directly for security-sensitive work, and an appropriate generator for simulations.
 
+> **OpenJEV support:** Jev is built by [TypeSafe](https://typesafe.ai). This fork keeps TypeSafe as the default and adds optional support for [OpenJEV](https://openjev.sh), a free community gateway to the same Jev model — set `OPENJEV_API_KEY` (or `--provider openjev`) to use it. Original project: https://github.com/fluffypony/jevrand by @fluffypony.
+
 ## Install and run
 
 Requires Python 3.10 or newer. Install the CLI directly from GitHub with
@@ -32,7 +34,7 @@ export OPENROUTER_API_KEY='your-key'
 jevrand --provider openrouter
 ```
 
-jevrand selects TypeSafe when `TYPESAFE_API_KEY` is set, otherwise it uses `OPENROUTER_API_KEY`. If both exist, TypeSafe wins. `--provider typesafe` or `--provider openrouter` selects one explicitly and requires its key. Keys come from the process environment; jevrand does not load `.env` files.
+jevrand selects TypeSafe when `TYPESAFE_API_KEY` is set, otherwise it uses `OPENROUTER_API_KEY`, then `OPENJEV_API_KEY`. If more than one exists, TypeSafe wins. `--provider typesafe`, `--provider openrouter`, or `--provider openjev` selects one explicitly and requires its key. Keys come from the process environment; jevrand does not load `.env` files.
 
 There are no runtime dependencies beyond Python's standard library.
 
@@ -68,7 +70,7 @@ For generation, use `--range TOP` or `--range BOTTOM TOP`. All ranges include th
 | `--count N` | Generate `N` approved numbers. Default: 1. Repeated values are allowed. |
 | `--json` | Write one JSON object for a check, or one object per line for generation. Also works with `reasons`. |
 | `--decimals [N]` | Use `N` decimal places, or 2 when `N` is omitted. |
-| `--provider typesafe\|openrouter` | Select the provider explicitly. |
+| `--provider typesafe\|openrouter\|openjev` | Select the provider explicitly. |
 | `--timeout SECONDS` | Set the socket timeout, greater than 0 and at most 86 400 seconds. Default: 30. |
 | `--max-attempts N` | Check at most `N` candidates across the whole run, including rejections. Default: unlimited. |
 | `--help` | Show command help. |
@@ -171,7 +173,7 @@ Results expose these fields:
 | `approved` | Jev's verdict as a boolean. |
 | `reasons` | An empty tuple on approval, or a tuple with one rejection code. JSON uses an array. |
 | `explanation` | Local text for the selected verdict. |
-| `provider` | `typesafe` or `openrouter`. |
+| `provider` | `typesafe`, `openrouter`, or `openjev`. |
 | `model` | The model identifier sent to the provider. |
 | `attempts` | The number of candidates checked so far across the whole generation call, including rejections. A standalone check uses 1. |
 
@@ -228,6 +230,7 @@ TypeSafe's Jev is a decision model. jevrand sends the candidate and its context 
 | --- | --- | --- |
 | TypeSafe | `https://api.typesafe.ai/v1/systemone` | `jev-latest` |
 | OpenRouter | `https://openrouter.ai/api/alpha/decisions` | `~typesafe/jev-latest` |
+| OpenJEV | `https://api.openjev.sh/v1/systemone` | `openjev` |
 
 Both use bearer authentication and the typed Decisions API. The provider receives every candidate you generate or submit for checking.
 
@@ -236,6 +239,7 @@ Provider documentation:
 - https://docs.typesafe.ai/introduction
 - https://docs.typesafe.ai/api
 - https://openrouter.ai/~typesafe/jev-latest
+- https://openjev.sh/docs
 
 ## Development
 

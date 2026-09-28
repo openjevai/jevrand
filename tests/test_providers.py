@@ -25,6 +25,7 @@ QUESTION = {
 def clean_provider_environment(monkeypatch):
     monkeypatch.delenv("TYPESAFE_API_KEY", raising=False)
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    monkeypatch.delenv("OPENJEV_API_KEY", raising=False)
 
 
 @pytest.fixture
@@ -62,6 +63,12 @@ def decision(choice="approved", **extra):
             "https://openrouter.ai/api/alpha/decisions",
             "~typesafe/jev-latest",
             "OPENROUTER_API_KEY",
+        ),
+        (
+            "openjev",
+            "https://api.openjev.sh/v1/systemone",
+            "openjev",
+            "OPENJEV_API_KEY",
         ),
     ],
 )
@@ -119,11 +126,12 @@ def test_explicit_key_overrides_provider_environment(monkeypatch):
 @pytest.mark.parametrize(
     ("kwargs", "message"),
     [
-        ({}, "Set TYPESAFE_API_KEY or OPENROUTER_API_KEY"),
+        ({}, "Set TYPESAFE_API_KEY, OPENROUTER_API_KEY, or OPENJEV_API_KEY"),
         ({"name": "typesafe"}, "Set TYPESAFE_API_KEY"),
         ({"name": "openrouter"}, "Set OPENROUTER_API_KEY"),
-        ({"name": "unknown"}, "provider must be typesafe or openrouter"),
-        ({"name": ["typesafe"]}, "provider must be typesafe or openrouter"),
+        ({"name": "openjev"}, "Set OPENJEV_API_KEY"),
+        ({"name": "unknown"}, "provider must be typesafe, openrouter, or openjev"),
+        ({"name": ["typesafe"]}, "provider must be typesafe, openrouter, or openjev"),
         ({"api_key": FAKE_KEY}, "Specify a provider"),
     ],
 )

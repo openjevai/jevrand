@@ -15,6 +15,7 @@ PROVIDERS = {
         "~typesafe/jev-latest",
         "OPENROUTER_API_KEY",
     ),
+    "openjev": ("https://api.openjev.sh/v1/systemone", "openjev", "OPENJEV_API_KEY"),
 }
 MAX_RESPONSE_BYTES = 1_048_576
 
@@ -47,7 +48,7 @@ class Provider:
                 "The timeout must be greater than zero and at most 86400 seconds."
             )
         if name is not None and (not isinstance(name, str) or name not in PROVIDERS):
-            raise ConfigurationError("The provider must be typesafe or openrouter.")
+            raise ConfigurationError("The provider must be typesafe, openrouter, or openjev.")
         if api_key is not None and name is None:
             raise ConfigurationError("Specify a provider when you supply an API key.")
         if name is None:
@@ -56,7 +57,9 @@ class Provider:
                 None,
             )
         if name is None:
-            raise ConfigurationError("Set TYPESAFE_API_KEY or OPENROUTER_API_KEY in your shell.")
+            raise ConfigurationError(
+                "Set TYPESAFE_API_KEY, OPENROUTER_API_KEY, or OPENJEV_API_KEY in your shell."
+            )
         url, model, env = PROVIDERS[name]
         key = api_key if api_key is not None else os.environ.get(env, "")
         if not isinstance(key, str) or not key.strip():
@@ -90,6 +93,7 @@ class Provider:
                 403: "Check the account's access to Jev.",
                 422: "The provider rejected the request format.",
                 429: "The rate limit was reached. Try again later.",
+                503: "The provider is unavailable. Try again later.",
                 529: "The provider is overloaded. Try again later.",
             }
             hint = hints.get(exc.code, "Try again later or check the provider's status.")
